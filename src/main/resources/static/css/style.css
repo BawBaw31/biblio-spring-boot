@@ -34,3 +34,14 @@
     text-align: center;
     padding: 2rem 15rem;
 }
+
+.btn-group {
+    padding: 0 15rem;
+}
+
+.book-cards-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2rem;
+    padding: 2rem 0;
+}
