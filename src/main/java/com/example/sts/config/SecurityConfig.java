@@ -29,6 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers(
                 "/registration**",
+                "/forgotPassword**",
+                "/user/changePassword**",
+                "/user/resetPassword**",
+                "/user/savePassword",
                 "/js/**",
                 "/css/**",
                 "/img/**").permitAll()

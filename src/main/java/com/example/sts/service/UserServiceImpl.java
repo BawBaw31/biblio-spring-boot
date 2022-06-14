@@ -19,6 +19,7 @@ import com.example.sts.web.dto.UserRegistrationDto;
 
 @Service
 public class UserServiceImpl implements UserService {
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -50,5 +51,10 @@ public class UserServiceImpl implements UserService {
 
     private Collection < ? extends GrantedAuthority > mapRolesToAuthorities(Collection < Role > roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+    }
+
+    public void changeUserPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        this.save(new UserRegistrationDto(user));
     }
 }
