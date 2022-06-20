@@ -2,14 +2,20 @@
     <h2>Livres</h2>
 
     <div class="btn-group" role="group" aria-label="Choose category">
-        <a class="category-btn btn btn-primary" id="all" role="button">Tous les livres</a>
-        <a class="category-btn btn btn-secondary" id="combat" role="button">Combat</a>
-        <a class="category-btn btn btn-secondary" id="comedy" role="button">Comédie</a>
-        <a class="category-btn btn btn-secondary" id="fantastic" role="button">Fantastique</a>
-
+        <a class="filter category-btn btn btn-secondary border-bottom border-5" id="all" role="button">Tous les livres</a>
+        <a class="filter category-btn btn btn-secondary border-bottom" id="combat" role="button">Combat</a>
+        <a class="filter category-btn btn btn-secondary border-bottom" id="comedie" role="button">Comédie</a>
+        <a class="filter category-btn btn btn-secondary border-bottom" id="fantastique" role="button">Fantastique</a>
     </div>
 
     <div id="book-container" class="book-cards-container">
-        
+        <div th:class="'card ' + ${book.categorie}" th:each="book : ${books}">
+            <img class="card-img-top" th:src="'/img/' + ${book.cover} + '.jpg'" th:alt="${book.name}">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${book.name}"></h5>
+                <p class="card-text" th:text="${book.author}"></p>
+                <a th:href="@{'/bookDetails/' + ${book.id}}" class="btn btn-primary">Voir</a>
+            </div>
+        </div>
     </div>
 </div>

@@ -30,9 +30,10 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(
                 "/registration**",
                 "/forgotPassword**",
+                "/updatePassword**",
                 "/user/changePassword**",
                 "/user/resetPassword**",
-                "/user/savePassword",
+                "/user/savePassword**",
                 "/js/**",
                 "/css/**",
                 "/img/**").permitAll()

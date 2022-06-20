@@ -12,13 +12,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.sts.model.PasswordResetToken;
 import com.example.sts.model.Role;
 import com.example.sts.model.User;
+import com.example.sts.repository.PasswordTokenRepository;
 import com.example.sts.repository.UserRepository;
 import com.example.sts.web.dto.UserRegistrationDto;
 
 @Service
 public class UserServiceImpl implements UserService {
+    @Autowired
+    private PasswordTokenRepository passwordTokenRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -39,6 +44,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -55,6 +62,15 @@ public class UserServiceImpl implements UserService {
 
     public void changeUserPassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
-        this.save(new UserRegistrationDto(user));
+        userRepository.save(user);
+    }
+
+    @Override
+    public User findUserByPasswordResetToken(String token) {
+        PasswordResetToken userToken = passwordTokenRepository.findByToken(token);
+        if (userToken == null) {
+            return null;
+        }
+        return userToken.getUser();
     }
 }

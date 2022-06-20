@@ -3,7 +3,6 @@ package com.example.sts.web.controller;
 import java.util.Locale;
 import java.util.UUID;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.sts.model.GenericResponse;
 import com.example.sts.model.User;
 import com.example.sts.repository.UserRepository;
 import com.example.sts.service.PasswordTokenService;
@@ -26,6 +24,7 @@ import com.example.sts.web.dto.PasswordDto;
 
 @Controller
 public class PasswordTokenController {
+    @Autowired
     private PasswordTokenService passwordTokenService;
     
     @Autowired
@@ -44,48 +43,48 @@ public class PasswordTokenController {
         if(result != null) {
             return "redirect:/login?error";
         } else {
-            model.addAttribute("token", token);
-            return "redirect:/updatePassword";
+            return "redirect:/updatePassword?token=" + token;
         }
     }
 
     @PostMapping("/user/resetPassword")
-    public GenericResponse resetPassword(HttpServletRequest request, 
+    public String resetPassword(HttpServletRequest request, 
         @ModelAttribute("email") String userEmail) {
         User user = userRepository.findByEmail(userEmail);
         if (user == null) {
-            throw new RuntimeErrorException(new Error("User not found"));
+            return "redirect:/forgotPassword?error";
         }
         String token = UUID.randomUUID().toString();
         passwordTokenService.createPasswordResetTokenForUser(user, token);
-        mailSender.send(constructResetTokenEmail(request.getLocalAddr(), 
-            request.getLocale(), token, user));
-        return new GenericResponse("Reset password email sent");
+        mailSender.send(constructResetTokenEmail(
+            request.getRequestURL().toString().replace(request.getServletPath(), ""), 
+            token, user));
+        return "redirect:/forgotPassword?success";
     }
 
     @PostMapping("/user/savePassword")
-    public GenericResponse savePassword(final Locale locale, @Validated PasswordDto passwordDto) {
+    public String savePassword(final Locale locale, @Validated PasswordDto passwordDto) {
 
         String result = passwordTokenService.validatePasswordResetToken(passwordDto.getToken());
 
         if(result != null) {
-            return new GenericResponse("Invalid token: " + result);
+            return "redirect:/updatePassword?error=true?&token=" + passwordDto.getToken();
         }
 
-        User user = userRepository.findUserByPasswordResetToken(passwordDto.getToken());
-        if(user != null) {
+        User user = userService.findUserByPasswordResetToken(passwordDto.getToken());
+        if(user != null && passwordDto.getConfirmPassword().equals(passwordDto.getNewPassword())) {
             userService.changeUserPassword(user, passwordDto.getNewPassword());
-            return new GenericResponse("Password updated");
+            return "redirect:/updatePassword?success=true?&token=" + passwordDto.getToken();
         } else {
-            return new GenericResponse("User not found");
+            return "redirect:/updatePassword?error=true?&token=" + passwordDto.getToken();
         }
     }
 
     private SimpleMailMessage constructResetTokenEmail(
-    String contextPath, Locale locale, String token, User user) {
+    String contextPath, String token, User user) {
         String url = contextPath + "/user/changePassword?token=" + token;
         String message = "Reset your password by clicking the link: " + url;
-        return constructEmail("Reset Password", message + " \r\n" + url, user);
+        return constructEmail("Reset Password", message, user);
     }
 
     private SimpleMailMessage constructEmail(String subject, String body, 

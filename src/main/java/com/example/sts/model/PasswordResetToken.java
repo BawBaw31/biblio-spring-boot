@@ -1,6 +1,7 @@
 package com.example.sts.model;
 
-import java.sql.Date;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,9 +16,8 @@ import lombok.Data;
 @Data
 @Entity
 public class PasswordResetToken {
- 
-    private static final int EXPIRATION = 60 * 24;
- 
+    private static final int EXPIRATION = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,9 +30,16 @@ public class PasswordResetToken {
  
     private Date expiryDate;
 
+    public PasswordResetToken() {
+        super();
+    }
+
     public PasswordResetToken(String token, User user) {
         super();
         this.token = token;
         this.user = user;
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR_OF_DAY, EXPIRATION);
+        this.expiryDate = cal.getTime();
     }
 }

@@ -8,4 +8,5 @@ import com.example.sts.web.dto.UserRegistrationDto;
 public interface UserService extends UserDetailsService {    
     User save(UserRegistrationDto userDto);
     void changeUserPassword(User user, String password);
+    User findUserByPasswordResetToken(String token);
 }

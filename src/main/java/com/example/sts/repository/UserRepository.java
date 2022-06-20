@@ -6,5 +6,4 @@ import com.example.sts.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
-    User findUserByPasswordResetToken(String token);
 }
