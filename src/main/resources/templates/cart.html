@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STS - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Nav -->
+    <div th:replace="fragments/navbar.html"></div>
+
+    <div class="my-5 container">
+        <h1>My Cart</h1>
+        <form th:action="@{/cart/validate}" th:object="${form}" method="post">
+            <fieldset>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Book</th>
+                        <th scope="col">Quantity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cartItem, row : ${form.cartItems}">
+                            <th scope="row" th:text="${cartItem.book.id}"></th>
+                            <td th:text="${cartItem.getBook().name}">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" aria-label="quantity" th:name="|cartItems[${row.index}].quantity|" th:value="${cartItem.getQuantity()}" />
+                            </td>
+                            <td>
+                                <input hidden type="text" th:name="|cartItems[${row.index}].id|" th:value="${cartItem.getId()}"/>
+                            </td>
+                            <td>
+                                <input hidden type="text" th:name="|cartItems[${row.index}].user|" th:value="${cartItem.getUser().id}"/>
+                            </td>
+                            <td>
+                                <input hidden type="text" th:name="|cartItems[${row.index}].book|" th:value="${cartItem.getBook().id}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Validate Cart</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

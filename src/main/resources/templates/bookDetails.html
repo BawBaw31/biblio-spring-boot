@@ -22,7 +22,11 @@
                         <div class="card-body">
                             <h1 th:text="${book.name}"></h1>
                             <p class="card-text" th:text="${book.author}"></p>
-                            <a href="#" class="btn btn-primary">Add to cart</a>
+                            <form method="get" th:action="@{'/cart/add/' + ${book.id}}">
+                                <button type="submit" class="btn btn-primary">
+                                    Add to cart
+                                </button>
+                            </form>
                         </div>
                       </div>
                 </div>
